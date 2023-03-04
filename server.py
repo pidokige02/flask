@@ -1,7 +1,8 @@
-from flask import Flask
+from flask import Flask, request, redirect
 
 app = Flask(__name__)
 
+nextId = 4
 topics = [
     {'id': 1, 'title': 'html', 'body': 'html is ...'},
     {'id': 2, 'title': 'css', 'body': 'css is ...'},
@@ -46,16 +47,26 @@ def read(id):
             break
     return template(getContents(), f'<h2>{title}</h2>{body}')
 
-@app.route('/create/')
+@app.route('/create/', methods=['GET', 'POST'])
 def create():
-    content = '''
-        <form action="/create/" method="POST">
-            <p><input type="text" name="title" placeholder="title"></p>
-            <p><textarea name="body" placeholder="body"></textarea></p>
-            <p><input type="submit" value="create"></p>
-        </form>
-    '''
-    return template(getContents(), content)
+    if request.method == 'GET':
+        content = '''
+            <form action="/create/" method="POST">
+                <p><input type="text" name="title" placeholder="title"></p>
+                <p><textarea name="body" placeholder="body"></textarea></p>
+                <p><input type="submit" value="create"></p>
+            </form>
+        '''
+        return template(getContents(), content)
+    elif request.method == 'POST':
+        global nextId
+        title = request.form['title']
+        body = request.form['body']
+        newTopic = {'id': nextId, 'title': title, 'body': body}
+        topics.append(newTopic)
+        url = '/read/'+str(nextId)+'/'
+        nextId = nextId + 1
+        return redirect(url)
 
 app.run(debug=True)  # debug=True 는 code 변경시 자동으로 변경되어 실행됨
 # app.run(port=5001, debug=True)  # port 변경이 가능함
