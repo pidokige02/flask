@@ -18,6 +18,9 @@ def template(contents, content):
                 {contents}
             </ol>
             {content}
+            <ul>
+                <li><a href="/create/">create</a></li>
+            </ul>
         </body>
     </html>
     '''
@@ -45,7 +48,14 @@ def read(id):
 
 @app.route('/create/')
 def create():
-    return 'Create'
+    content = '''
+        <form action="/create/" method="POST">
+            <p><input type="text" name="title" placeholder="title"></p>
+            <p><textarea name="body" placeholder="body"></textarea></p>
+            <p><input type="submit" value="create"></p>
+        </form>
+    '''
+    return template(getContents(), content)
 
 app.run(debug=True)  # debug=True 는 code 변경시 자동으로 변경되어 실행됨
 # app.run(port=5001, debug=True)  # port 변경이 가능함
