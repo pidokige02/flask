@@ -15,7 +15,10 @@ def template(contents, content, id=None):
     if id != None:
         contextUI = f'''
             <li><a href="/update/{id}/">update</a></li>
-        '''
+            <li><form action="/delete/{id}/" method="POST">
+                    <input type="submit" value="delete">
+                </form>
+            </li>        '''
     return f'''<!doctype html>
     <html>
         <body>
@@ -103,6 +106,14 @@ def update(id):
                 break
         url = '/read/'+str(id)+'/'
         return redirect(url)
+
+@app.route('/delete/<int:id>/', methods=['POST'])
+def delete(id):
+    for topic in topics:
+        if id == topic['id']:
+            topics.remove(topic)
+            break
+    return redirect('/')
 
 app.run(debug=True)  # debug=True 는 code 변경시 자동으로 변경되어 실행됨
 # app.run(port=5001, debug=True)  # port 변경이 가능함
